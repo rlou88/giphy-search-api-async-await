@@ -1,20 +1,20 @@
-$(function () {
-  $('#search').submit((event) => {
-    event.preventDefault()
-    console.log('form being submitted')
+$(function() {
+  $('#search').submit(event => {
+    event.preventDefault();
+    console.log('form being submitted');
 
-    const query = $('#query').val()
-    console.log(query)
+    const query = $('#query').val();
+    console.log(query);
 
-    $('#results-table tbody').html('')
-    $('#query').val('')
+    $('#results-table tbody').html('');
+    $('#query').val('');
 
-    search(query)
-  })
+    search(query);
+  });
 
-  function displayResults (gifs) {
-    console.log(gifs)
-    gifs.forEach((gif) => {
+  function displayResults(gifs) {
+    console.log(gifs);
+    gifs.forEach(gif => {
       $('#results-table tbody').append(
         `<tr>
           <td>${gif.title}</td>
@@ -22,27 +22,29 @@ $(function () {
           <td>${gif.rating}</td>
           <td><a href="${gif.url}"> link </a></td>
         </tr>`
-      )
-    })
+      );
+    });
   }
 
-  function search (searchTerm) {
-    const url = 'https://api.giphy.com/v1/gifs/search'
-    const apiKey = '[ADD YOUR GIPHY API KEY HERE]'
+  async function search(searchTerm) {
+    // ** making API using async/await **
+    try {
+      const url = 'https://api.giphy.com/v1/gifs/search';
+      const apiKey = 'y2PJn7GqyQ8Y0xtWSRFNRyv8RBWv0GgL';
 
-    $.ajax({
-      url: url,
-      type: 'GET',
-      data: { q: searchTerm, limit: 50, api_key: apiKey }
-    })
-    .done((response) => {
-      // execute this function if request is successful
-      console.log(response)
-      displayResults(response.data)
-    })
-    .fail(() => {
-      // execute this function if request fails
-      alert('error occurred')
-    })
+      const response = await axios.get(url, {
+        params: {
+          q: searchTerm,
+          api_key: apiKey,
+          limit: 50
+        }
+      });
+
+      console.log(response);
+      displayResults(response.data.data);
+    } catch (error) {
+      console.log(error);
+      alert('an error occurred with your request');
+    }
   }
-})
+});
